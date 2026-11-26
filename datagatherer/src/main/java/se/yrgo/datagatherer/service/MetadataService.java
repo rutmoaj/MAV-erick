@@ -44,7 +44,17 @@ public class MetadataService {
 
     @Transactional
     public void persist(Collection<TrackMetadata> tracks) {
-        trackMetaDataRepository.deleteAllInBatch();
+        Set<String> keep = tracks.stream()
+                .map(TrackMetadata::getHashId)
+                .collect(Collectors.toSet());
+
+        List<String> stale = trackMetaDataRepository.findAllHashIds().stream()
+                .filter(id -> !keep.contains(id))
+                .toList();
+
+        if (!stale.isEmpty()) {
+            trackMetaDataRepository.deleteAllByIdInBatch(stale);
+        }
         trackMetaDataRepository.saveAll(tracks);
     }
 
