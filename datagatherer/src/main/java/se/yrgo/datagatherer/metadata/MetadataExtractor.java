@@ -1,5 +1,6 @@
 package se.yrgo.datagatherer.metadata;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
 import org.jaudiotagger.tag.FieldKey;
@@ -22,6 +23,7 @@ public class MetadataExtractor {
             String artist,
             String genre,
             String album,
+            @JsonIgnore
             String lyrics,
             String year,
 
