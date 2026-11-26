@@ -70,7 +70,7 @@ public class MetadataExtractor {
 
         return new Track(
                 sha256(path),
-                MUSIC_DIR.relativize(path).toString(),
+                "music/" + MUSIC_DIR.relativize(path).toString(),
 
                 tag.getFirst(FieldKey.TITLE),
                 tag.getFirst(FieldKey.ARTIST),
