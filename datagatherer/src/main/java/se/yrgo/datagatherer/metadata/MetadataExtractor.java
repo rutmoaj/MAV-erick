@@ -47,7 +47,7 @@ public class MetadataExtractor {
 
         return new RawTrack(
                 sha256(path),
-                "music/" + MUSIC_DIR.relativize(path).toString(),
+                path.toString(),
 
                 tag.getFirst(FieldKey.TITLE),
                 tag.getFirst(FieldKey.ARTIST),
@@ -66,7 +66,7 @@ public class MetadataExtractor {
 
     private static RawCover findCover(Path soundFilePath) {
         Path path = soundFilePath.resolveSibling("cover.jpg");
-        String pathString = MUSIC_DIR.relativize(path).toString();
+        String pathString = path.toString();
 
         for (RawCover cover : covers) {
             if (cover.path().equals(pathString)) {
@@ -78,7 +78,7 @@ public class MetadataExtractor {
             return null;
         }
 
-        RawCover cover = new RawCover(sha256(path), "music/" + pathString);
+        RawCover cover = new RawCover(sha256(path), pathString);
         covers.add(cover);
 
         return cover;
