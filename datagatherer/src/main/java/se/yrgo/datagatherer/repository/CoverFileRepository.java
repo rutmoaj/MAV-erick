@@ -8,8 +8,6 @@ import java.util.Optional;
 
 public interface CoverFileRepository extends JpaRepository<CoverFile, String> {
 
-    public Optional<CoverFile> findByHashId(String hashId);
-
     public void deleteAll();
 
 }
