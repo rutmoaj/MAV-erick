@@ -9,4 +9,5 @@ public interface TrackFileRepository extends JpaRepository<TrackFile, String> {
 
     public Optional<TrackFile> findByHashId(String hashId);
 
+    public void deleteAll();
 }

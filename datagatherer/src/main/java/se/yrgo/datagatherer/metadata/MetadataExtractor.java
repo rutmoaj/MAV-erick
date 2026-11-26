@@ -39,9 +39,8 @@ public class MetadataExtractor {
     ) {
     }
 
-    private static Path MUSIC_DIR = Path.of("music");
-    private static Set<Cover> covers = new HashSet<>();
-
+    private static final Path MUSIC_DIR = Path.of("music");
+    private static final Set<Cover> covers = new HashSet<>();
 
     public static List<Track> extractAllMetadata() {
         try {
@@ -59,8 +58,6 @@ public class MetadataExtractor {
             throw new RuntimeException(e);
         }
     }
-
-
 
     private static Track extractMetaFromFile(Path path) throws Exception {
         AudioFile audioFile = AudioFileIO.read(path.toFile());
