@@ -3,6 +3,8 @@ package se.yrgo.datagatherer.entity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
+import java.util.Objects;
+
 @Entity
 public class CoverFile {
 
@@ -31,5 +33,19 @@ public class CoverFile {
 
     public void setPath(String path) {
         this.path = path;
+    }
+
+    @Override
+    public final boolean equals(Object o) {
+        if (!(o instanceof CoverFile coverFile)) return false;
+
+        return Objects.equals(hashId, coverFile.hashId) && Objects.equals(path, coverFile.path);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hashCode(hashId);
+        result = 31 * result + Objects.hashCode(path);
+        return result;
     }
 }

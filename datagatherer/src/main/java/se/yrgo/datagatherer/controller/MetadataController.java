@@ -12,6 +12,8 @@ import se.yrgo.datagatherer.repository.CoverFileRepository;
 import se.yrgo.datagatherer.repository.TrackFileRepository;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/metadata")
@@ -37,9 +39,9 @@ public class MetadataController {
                 .map(t -> new TrackFile(t.hashId(), t.path()))
                 .toList();
 
-        List<CoverFile> coverFiles = tracks.stream()
-                .map(t -> new CoverFile(t.hashId(), t.path()))
-                .toList();
+        Set<CoverFile> coverFiles = tracks.stream()
+                .map(t -> new CoverFile(t.cover().hashId(), t.cover().path()))
+                .collect(Collectors.toSet());
 
         trackFileRepository.saveAll(trackFiles);
         coverFileRepository.saveAll(coverFiles);

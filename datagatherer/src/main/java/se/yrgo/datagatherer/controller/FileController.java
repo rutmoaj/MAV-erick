@@ -71,7 +71,7 @@ public class FileController {
     private Resource getResource(String pathString) {
         Path path = Path.of(pathString);
 
-        System.out.println(path.toString());
+
         if (!Files.isRegularFile(path)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }

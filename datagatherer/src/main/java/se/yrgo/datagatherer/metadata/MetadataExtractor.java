@@ -35,7 +35,7 @@ public class MetadataExtractor {
     ) {
     }
 
-    private record Cover(
+    public record Cover(
             String hashId,
             String path
     ) {
@@ -101,7 +101,7 @@ public class MetadataExtractor {
             return null;
         }
 
-        Cover cover = new Cover(sha256(path), pathString);
+        Cover cover = new Cover(sha256(path), "music/" + pathString);
         covers.add(cover);
 
         return cover;
