@@ -34,12 +34,11 @@ public class FileController {
     @GetMapping("/track/{hashId}")
     public ResponseEntity<Resource> getTrackFile(@PathVariable String hashId) throws IOException {
 
-        TrackFile trackFile = trackRepo.findByHashId(hashId)
+        TrackFile trackFile = trackRepo.findById(hashId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
         try {
             Resource resource = getResource(trackFile.getPath());
-
             return ResponseEntity.ok()
                     .contentType(MediaType.parseMediaType("audio/ogg"))
                     .contentLength(resource.contentLength())
@@ -72,10 +71,18 @@ public class FileController {
     private Resource getResource(String pathString) {
         Path path = Path.of(pathString);
 
+        System.out.println(path.toString());
         if (!Files.isRegularFile(path)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
         return new FileSystemResource(path);
+    }
+
+    @GetMapping("/test")
+    public String test() {
+        return trackRepo.findById("4fg27WmVUB6grfVy").isPresent()
+                ? "Found"
+                : "Not found";
     }
 
 
