@@ -52,7 +52,7 @@ public class FileController {
     @GetMapping("/cover/{hashId}")
     public ResponseEntity<Resource> getCoverFile(@PathVariable String hashId) throws IOException {
 
-        CoverFile coverFile = coverRepo.findByHashId(hashId)
+        CoverFile coverFile = coverRepo.findById(hashId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
         try {
