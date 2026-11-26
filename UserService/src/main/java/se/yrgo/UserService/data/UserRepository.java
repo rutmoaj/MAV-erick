@@ -7,4 +7,5 @@ import se.yrgo.UserService.domain.User;
 
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findById(Long id);
+    boolean existsByUsername(String username);
 }
