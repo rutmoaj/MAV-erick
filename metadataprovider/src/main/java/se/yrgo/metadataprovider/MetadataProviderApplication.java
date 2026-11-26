@@ -1,4 +1,4 @@
-package se.yrgo.metadata_provider;
+package se.yrgo.metadataprovider;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

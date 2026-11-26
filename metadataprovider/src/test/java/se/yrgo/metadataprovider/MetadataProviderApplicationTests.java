@@ -1,4 +1,4 @@
-package se.yrgo.metadata_provider;
+package se.yrgo.metadataprovider;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
