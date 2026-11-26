@@ -15,44 +15,21 @@ import java.util.*;
 
 public class MetadataExtractor {
 
-    public record Track(
-            String hashId,
-            String path,
 
-            String title,
-            String artist,
-            String genre,
-            String album,
-            @JsonIgnore
-            String lyrics,
-            String year,
 
-            int trackNumber,
-            int discNumber,
-            int durationSeconds,
-            long fileSizeBytes,
-            Cover cover
-    ) {
-    }
-
-    public record Cover(
-            String hashId,
-            String path
-    ) {
-    }
 
     private static final Path MUSIC_DIR = Path.of("music");
-    private static final Set<Cover> covers = new HashSet<>();
+    private static final Set<RawCover> covers = new HashSet<>();
 
-    public static List<Track> extractAllMetadata() {
+    public static List<RawTrack> extractAllMetadata() {
         try {
-            List<Track> tracks = new ArrayList<>();
+            List<RawTrack> tracks = new ArrayList<>();
             for (Path file : Files.walk(MUSIC_DIR).toList()) {
                 if (!file.getFileName().toString().endsWith(".opus")) {
                     continue;
                 }
                 System.out.println(file.getFileName().toString());
-                Track track = extractMetaFromFile(file);
+                RawTrack track = extractMetaFromFile(file);
                 tracks.add(track);
             }
             return tracks;
@@ -61,14 +38,14 @@ public class MetadataExtractor {
         }
     }
 
-    private static Track extractMetaFromFile(Path path) throws Exception {
+    private static RawTrack extractMetaFromFile(Path path) throws Exception {
         AudioFile audioFile = AudioFileIO.read(path.toFile());
         Tag tag = audioFile.getTag();
 
         int discNumber = tag.getFirst(FieldKey.DISC_NO).isEmpty() ? 1 :
                 Integer.parseInt(tag.getFirst(FieldKey.DISC_NO));
 
-        return new Track(
+        return new RawTrack(
                 sha256(path),
                 "music/" + MUSIC_DIR.relativize(path).toString(),
 
@@ -87,11 +64,11 @@ public class MetadataExtractor {
         );
     }
 
-    private static Cover findCover(Path soundFilePath) {
+    private static RawCover findCover(Path soundFilePath) {
         Path path = soundFilePath.resolveSibling("cover.jpg");
         String pathString = MUSIC_DIR.relativize(path).toString();
 
-        for (Cover cover : covers) {
+        for (RawCover cover : covers) {
             if (cover.path().equals(pathString)) {
                 return cover;
             }
@@ -101,7 +78,7 @@ public class MetadataExtractor {
             return null;
         }
 
-        Cover cover = new Cover(sha256(path), "music/" + pathString);
+        RawCover cover = new RawCover(sha256(path), "music/" + pathString);
         covers.add(cover);
 
         return cover;
