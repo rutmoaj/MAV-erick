@@ -10,8 +10,10 @@ import se.yrgo.datagatherer.service.MetadataService;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.security.MessageDigest;
 import java.util.*;
 import java.util.function.Function;
@@ -153,20 +155,17 @@ public class MetadataExtractor {
      */
     private static String sha256(Path path) {
         try {
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            BasicFileAttributes attrs = Files.readAttributes(path, BasicFileAttributes.class);
+            String key = MUSIC_DIR.relativize(path).toString().replace('\\', '/')
+                    + "|" + attrs.size()
+                    + "|" + attrs.lastModifiedTime().toMillis();
 
-            try (InputStream input = Files.newInputStream(path)) {
-                byte[] buffer = new byte[8192];
-                int bytesRead;
-
-                while ((bytesRead = input.read(buffer)) != -1) {
-                    digest.update(buffer, 0, bytesRead);
-                }
-            }
+            byte[] digest = MessageDigest.getInstance("SHA-256")
+                    .digest(key.getBytes(StandardCharsets.UTF_8));
 
             return Base64.getUrlEncoder()
                     .withoutPadding()
-                    .encodeToString(digest.digest())
+                    .encodeToString(digest)
                     .substring(0, 16);
         } catch (Exception e) {
             throw new RuntimeException(e);
