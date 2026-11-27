@@ -6,53 +6,40 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import se.yrgo.datagatherer.dto.TrackMetadataDto;
-import se.yrgo.datagatherer.entity.CoverFile;
-import se.yrgo.datagatherer.entity.TrackFile;
-import se.yrgo.datagatherer.metadata.MetadataExtractor;
-import se.yrgo.datagatherer.metadata.RawTrack;
-import se.yrgo.datagatherer.repository.CoverFileRepository;
-import se.yrgo.datagatherer.repository.TrackFileRepository;
+import se.yrgo.datagatherer.entity.TrackMetadata;
+import se.yrgo.datagatherer.metadata_extraction.MetadataExtractor;
+import se.yrgo.datagatherer.service.MetadataService;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/metadata")
 public class MetadataController {
 
-    CoverFileRepository coverFileRepository;
-    TrackFileRepository trackFileRepository;
+    MetadataService metadataService;
 
-    public MetadataController(CoverFileRepository coverFileRepository, TrackFileRepository trackFileRepository) {
-        this.coverFileRepository = coverFileRepository;
-        this.trackFileRepository = trackFileRepository;
+    public MetadataController(MetadataService metadataService) {
+        this.metadataService = metadataService;
     }
 
     @PostMapping
     public ResponseEntity<List<TrackMetadataDto>> generateMetadata() {
-
-        coverFileRepository.deleteAll();
-        trackFileRepository.deleteAll();
-
-        List<RawTrack> tracks = MetadataExtractor.extractAllMetadata();
-
-        List<TrackFile> trackFiles = tracks.stream()
-                .map(t -> new TrackFile(t.hashId(), t.path()))
-                .toList();
-
-        Set<CoverFile> coverFiles = tracks.stream()
-                .map(t -> new CoverFile(t.cover().hashId(), t.cover().path()))
-                .collect(Collectors.toSet());
-
-        trackFileRepository.saveAll(trackFiles);
-        coverFileRepository.saveAll(coverFiles);
-
+        Set<TrackMetadata> tracks = MetadataExtractor.scanAllTracks(metadataService);
         return ResponseEntity.ok(
                 tracks.stream()
                         .map(TrackMetadataDto::createDto)
                         .toList()
         );
+    }
+
+    @GetMapping
+    public ResponseEntity<List<TrackMetadataDto>> getCachedTrackMetadata() {
+        var tracks =  metadataService.getCachedMetadata().stream()
+                .map(TrackMetadataDto::createDto).toList();
+
+        return ResponseEntity.ok(tracks);
     }
 
 }
